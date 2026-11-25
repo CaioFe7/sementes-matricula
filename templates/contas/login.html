@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block titulo %}Entrar{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-sm-9 col-md-6 col-lg-4">
+    <h1 class="h3 mb-3">Área da equipe</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">Usuário ou senha incorretos. Confira e tente de novo.</div>
+      {% endif %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.username.id_for_label }}">Usuário</label>
+        {{ form.username }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.password.id_for_label }}">Senha</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-success btn-lg w-100">Entrar</button>
+    </form>
+    <p class="text-muted small mt-3">Esqueceu a senha? Peça para a pessoa administradora definir uma nova.</p>
+  </div>
+</div>
+{% endblock %}

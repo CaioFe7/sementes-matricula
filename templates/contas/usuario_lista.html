@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block titulo %}Usuários{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Usuários da equipe</h1>
+  <a class="btn btn-success" href="{% url 'contas:usuario_criar' %}">Novo usuário</a>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr><th>Usuário</th><th>Nome</th><th>Perfil</th><th>Situação</th><th><span class="visually-hidden">Ações</span></th></tr>
+    </thead>
+    <tbody>
+      {% for usuario in usuarios %}
+      <tr>
+        <td>{{ usuario.username }}</td>
+        <td>{{ usuario.get_full_name|default:"-" }}</td>
+        <td>{{ usuario.perfil|default:"Sem perfil" }}</td>
+        <td>{% if usuario.is_active %}Ativo{% else %}<span class="text-danger">Inativo</span>{% endif %}</td>
+        <td class="text-end text-nowrap">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'contas:usuario_editar' usuario.pk %}">Editar</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'contas:usuario_senha' usuario.pk %}">Nova senha</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="text-muted small">
+  <strong>Administrador:</strong> acesso total (exclui registros, exporta relatórios e gerencia usuários).
+  <strong>Atendente:</strong> cadastra, consulta, edita e aprova matrículas.
+</p>
+{% endblock %}
