@@ -36,6 +36,11 @@ def _gravar(request, dados: dict):
     request.session[CHAVE_SESSAO] = dados
 
 
+def _enviado(request):
+    """Dados enviados no POST (mesmo vazios) ou None quando a página só foi aberta."""
+    return request.POST if request.method == "POST" else None
+
+
 def _serializar(form) -> dict:
     """Transforma os dados validados em texto simples, para caber na sessão."""
     dados = {}
@@ -55,7 +60,7 @@ def _serializar(form) -> dict:
 def etapa_responsavel(request):
     """Etapa 1: dados do pai, mãe ou responsável."""
     dados = _ler(request)
-    form = ResponsavelPublicoForm(request.POST or None, initial=dados.get("responsavel"))
+    form = ResponsavelPublicoForm(_enviado(request), initial=dados.get("responsavel"))
     if request.method == "POST" and form.is_valid():
         dados["responsavel"] = _serializar(form)
         _gravar(request, dados)
@@ -123,7 +128,7 @@ def etapa_atividade(request):
 
     escolhidas = dados.get("atividades") or []
     inicial = {nome_campo_atividade(i): pk for i, pk in enumerate(escolhidas)}
-    form = EscolhaAtividadesForm(request.POST or None, criancas=criancas, initial=inicial)
+    form = EscolhaAtividadesForm(_enviado(request), criancas=criancas, initial=inicial)
     if request.method == "POST" and form.is_valid():
         dados["atividades"] = [
             str(form.cleaned_data[nome_campo_atividade(i)].pk) for i in range(len(criancas))
@@ -143,7 +148,7 @@ def etapa_termo(request):
     if not criancas or len(escolhidas) != len(criancas):
         return redirect("matricula_publica:atividade")
 
-    form = TermoForm(request.POST or None)
+    form = TermoForm(_enviado(request))
     if request.method == "POST" and form.is_valid():
         try:
             matriculas = registrar_matriculas_publicas(dados)
