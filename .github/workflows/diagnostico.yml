@@ -1,0 +1,61 @@
+# TEMPORÁRIO: roda o projeto no GitHub e guarda a saída no ramo "ci-diagnostico",
+# para conferir e corrigir o que falhar. Será removido quando tudo estiver passando.
+name: Diagnóstico (temporário)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  diagnostico:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rodar tudo e guardar a saída
+        run: |
+          mkdir -p _diag
+          pip install -r requirements-dev.txt > _diag/01-pip.txt 2>&1; echo "saida=$?" >> _diag/01-pip.txt
+          pip freeze > _diag/02-freeze.txt 2>&1
+          python manage.py makemigrations > _diag/03-makemigrations.txt 2>&1; echo "saida=$?" >> _diag/03-makemigrations.txt
+          python manage.py check > _diag/04-check.txt 2>&1; echo "saida=$?" >> _diag/04-check.txt
+          python manage.py migrate > _diag/05-migrate-sqlite.txt 2>&1; echo "saida=$?" >> _diag/05-migrate-sqlite.txt
+          ruff check . > _diag/06-ruff.txt 2>&1; echo "saida=$?" >> _diag/06-ruff.txt
+          pytest -q -p no:cacheprovider > _diag/07-pytest-sqlite.txt 2>&1; echo "saida=$?" >> _diag/07-pytest-sqlite.txt
+          python manage.py criar_admin_teste > /dev/null 2> _diag/08-admin-teste.txt; echo "saida=$?" >> _diag/08-admin-teste.txt
+          python manage.py popular_dados_ficticios --semente 1 > _diag/09-popular.txt 2>&1; echo "saida=$?" >> _diag/09-popular.txt
+          export DATABASE_URL=postgres://postgres@localhost:5432/postgres
+          python manage.py migrate > _diag/10-migrate-postgres.txt 2>&1; echo "saida=$?" >> _diag/10-migrate-postgres.txt
+          pytest -q -p no:cacheprovider --migrations > _diag/11-pytest-postgres.txt 2>&1; echo "saida=$?" >> _diag/11-pytest-postgres.txt
+          python manage.py popular_dados_ficticios --semente 1 > _diag/12-popular-postgres.txt 2>&1; echo "saida=$?" >> _diag/12-popular-postgres.txt
+          SECRET_KEY=chave-de-teste-do-ci ALLOWED_HOSTS=localhost DJANGO_SETTINGS_MODULE=config.settings.prod python manage.py check --deploy > _diag/13-check-deploy.txt 2>&1; echo "saida=$?" >> _diag/13-check-deploy.txt
+          SECRET_KEY=chave-de-teste-do-ci ALLOWED_HOSTS=localhost DJANGO_SETTINGS_MODULE=config.settings.prod python manage.py collectstatic --noinput > _diag/14-collectstatic.txt 2>&1; echo "saida=$?" >> _diag/14-collectstatic.txt
+
+      - name: Publicar a saída no ramo ci-diagnostico
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B ci-diagnostico
+          git add _diag apps/cadastros/migrations apps/matriculas/migrations
+          git commit -m "diagnóstico do commit ${GITHUB_SHA}"
+          git push --force origin ci-diagnostico
