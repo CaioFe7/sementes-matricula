@@ -99,3 +99,9 @@ a:focus-visible,
   position: relative;
   height: 260px;
 }
+
+/* Sem isto, textos só para leitor de tela dentro das tabelas (ex.: o título
+   "Ações") alargam a página no celular e criam rolagem lateral. */
+.table-responsive {
+  position: relative;
+}
