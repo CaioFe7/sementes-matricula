@@ -3,6 +3,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 CAMPO_HONEYPOT = "site"
+OPCAO_VAZIA_PADRAO = "---------"
+OPCAO_VAZIA = "Selecione"
 
 
 class BootstrapFormMixin:
@@ -20,6 +22,18 @@ class BootstrapFormMixin:
                 classe = "form-control"
             existentes = widget.attrs.get("class", "")
             widget.attrs["class"] = f"{existentes} {classe}".strip()
+            self._trocar_opcao_vazia(campo)
+
+    @staticmethod
+    def _trocar_opcao_vazia(campo):
+        """Mostra "Selecione" no lugar dos tracinhos na primeira opção das listas."""
+        if isinstance(campo, forms.ModelChoiceField):
+            if campo.empty_label == OPCAO_VAZIA_PADRAO:
+                campo.empty_label = OPCAO_VAZIA
+        elif isinstance(campo, forms.ChoiceField):
+            opcoes = list(campo.choices)
+            if opcoes and tuple(opcoes[0]) == ("", OPCAO_VAZIA_PADRAO):
+                campo.choices = [("", OPCAO_VAZIA), *opcoes[1:]]
 
 
 class HoneypotMixin:
