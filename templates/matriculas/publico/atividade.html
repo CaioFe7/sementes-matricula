@@ -1,0 +1,14 @@
+{% extends "matriculas/publico/base_etapas.html" %}
+
+{% block etapa_conteudo %}
+<h2 class="h4">Escolha a atividade</h2>
+<p class="text-muted">Aparecem apenas as atividades para a idade de cada criança.</p>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% include "includes/form_campos.html" %}
+  <div class="d-grid d-sm-flex gap-2 mt-4">
+    <button type="submit" class="btn btn-success btn-lg">Continuar</button>
+    <a class="btn btn-outline-secondary btn-lg" href="{% url 'matricula_publica:crianca' %}">Voltar</a>
+  </div>
+</form>
+{% endblock %}

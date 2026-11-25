@@ -1,0 +1,34 @@
+{% extends "matriculas/publico/base_etapas.html" %}
+
+{% block etapa_conteudo %}
+<h2 class="h4">Confira e envie</h2>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <h3 class="h6">Resumo</h3>
+    <p class="mb-2"><strong>Responsável:</strong> {{ responsavel.nome }}</p>
+    <ul class="mb-0">
+      {% for item in resumo %}
+      <li><strong>{{ item.nome }}</strong>: {{ item.atividade.nome|default:"atividade não encontrada" }}{% if item.atividade %} ({{ item.atividade.dias_horarios }}){% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <h3 class="h6">Termo de consentimento (versão {{ versao_termo }})</h3>
+    {% include "includes/termo_consentimento.html" %}
+    <p class="mt-2 mb-0"><a href="{% url 'core:privacidade' %}" target="_blank" rel="noopener">Ler a política de privacidade completa</a></p>
+  </div>
+</div>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% include "includes/form_campos.html" %}
+  <div class="d-grid d-sm-flex gap-2 mt-4">
+    <button type="submit" class="btn btn-success btn-lg">Enviar matrícula</button>
+    <a class="btn btn-outline-secondary btn-lg" href="{% url 'matricula_publica:atividade' %}">Voltar</a>
+  </div>
+</form>
+{% endblock %}

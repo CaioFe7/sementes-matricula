@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block titulo %}Matrícula on-line{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="h3">Matrícula on-line</h1>
+    <ol class="etapas list-unstyled d-flex flex-wrap gap-2 my-3">
+      <li class="etapa{% if etapa == 1 %} etapa-atual{% endif %}"{% if etapa == 1 %} aria-current="step"{% endif %}>1. Responsável</li>
+      <li class="etapa{% if etapa == 2 %} etapa-atual{% endif %}"{% if etapa == 2 %} aria-current="step"{% endif %}>2. Criança</li>
+      <li class="etapa{% if etapa == 3 %} etapa-atual{% endif %}"{% if etapa == 3 %} aria-current="step"{% endif %}>3. Atividade</li>
+      <li class="etapa{% if etapa == 4 %} etapa-atual{% endif %}"{% if etapa == 4 %} aria-current="step"{% endif %}>4. Termo e envio</li>
+    </ol>
+    {% block etapa_conteudo %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

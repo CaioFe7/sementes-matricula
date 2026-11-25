@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">{{ titulo }}</h1>
+  <div class="d-flex flex-wrap gap-2">
+    {% if somente_pendentes %}
+    <a class="btn btn-outline-secondary" href="{% url 'matriculas:matricula_lista' %}">Ver todas</a>
+    {% else %}
+    <a class="btn btn-outline-secondary" href="{% url 'matriculas:matricula_pendentes' %}">Ver pendentes</a>
+    {% endif %}
+    <a class="btn btn-success" href="{% url 'matriculas:matricula_criar' %}">Nova matrícula</a>
+  </div>
+</div>
+
+{% if somente_pendentes %}
+<p class="text-muted">Matrículas feitas pelo formulário on-line que aguardam a confirmação da equipe. A mais antiga aparece primeiro.</p>
+{% else %}
+{% include "includes/filtro.html" %}
+{% endif %}
+
+<p class="text-muted">{{ page_obj.paginator.count }} matrícula(s).</p>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr><th>Protocolo</th><th>Criança</th><th>Idade</th><th>Atividade</th><th>Solicitada em</th><th>Situação</th><th><span class="visually-hidden">Ações</span></th></tr>
+    </thead>
+    <tbody>
+      {% for matricula in matriculas %}
+      <tr>
+        <td class="text-nowrap"><a href="{{ matricula.get_absolute_url }}">{{ matricula.protocolo }}</a></td>
+        <td>{{ matricula.crianca.nome }}</td>
+        <td>{{ matricula.crianca.idade }}</td>
+        <td>{{ matricula.atividade.nome }}</td>
+        <td>{{ matricula.data_solicitacao|date:"d/m/Y" }}</td>
+        <td><span class="badge situacao-{{ matricula.status }}">{{ matricula.get_status_display }}</span></td>
+        <td class="text-end text-nowrap">
+          {% if matricula.status == "pendente" %}
+          <form method="post" action="{% url 'matriculas:matricula_aprovar' matricula.pk %}" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="proxima" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-sm btn-success">Aprovar</button>
+          </form>
+          <a class="btn btn-sm btn-outline-danger" href="{% url 'matriculas:matricula_recusar' matricula.pk %}">Recusar</a>
+          {% endif %}
+          <a class="btn btn-sm btn-outline-primary" href="{{ matricula.get_absolute_url }}">Ver</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">{% if somente_pendentes %}Nenhuma matrícula pendente.{% else %}Nenhuma matrícula encontrada.{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/paginacao.html" %}
+{% endblock %}

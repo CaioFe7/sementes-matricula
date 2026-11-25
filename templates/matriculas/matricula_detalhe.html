@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load formatos %}
+
+{% block titulo %}Matrícula {{ matricula.protocolo }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Matrícula {{ matricula.protocolo }}
+    <span class="badge situacao-{{ matricula.status }} align-middle">{{ matricula.get_status_display }}</span>
+  </h1>
+  <div class="d-flex flex-wrap gap-2">
+    {% if matricula.status == "pendente" %}
+    <form method="post" action="{% url 'matriculas:matricula_aprovar' matricula.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success">Aprovar</button>
+    </form>
+    <a class="btn btn-outline-danger" href="{% url 'matriculas:matricula_recusar' matricula.pk %}">Recusar</a>
+    {% elif matricula.status == "ativa" %}
+    <a class="btn btn-outline-danger" href="{% url 'matriculas:matricula_encerrar' matricula.pk %}">Encerrar</a>
+    {% endif %}
+    {% if eh_administrador %}
+    <a class="btn btn-outline-secondary" href="{% url 'matriculas:matricula_excluir' matricula.pk %}">Excluir</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5">Matrícula</h2>
+        <dl class="row mb-0">
+          <dt class="col-sm-5">Atividade</dt><dd class="col-sm-7">{{ matricula.atividade.nome }}<br><span class="text-muted">{{ matricula.atividade.dias_horarios }}</span></dd>
+          <dt class="col-sm-5">Origem</dt><dd class="col-sm-7">{{ matricula.get_origem_display }}</dd>
+          <dt class="col-sm-5">Solicitada em</dt><dd class="col-sm-7">{{ matricula.data_solicitacao|date:"d/m/Y H:i" }}</dd>
+          <dt class="col-sm-5">Aprovada em</dt><dd class="col-sm-7">{{ matricula.data_aprovacao|date:"d/m/Y H:i"|default:"-" }}</dd>
+          <dt class="col-sm-5">Aprovada por</dt><dd class="col-sm-7">{{ matricula.aprovada_por|default:"-" }}</dd>
+          {% if matricula.motivo %}
+          <dt class="col-sm-5">Motivo</dt><dd class="col-sm-7">{{ matricula.motivo|linebreaksbr }}</dd>
+          {% endif %}
+          <dt class="col-sm-5">Consentimento</dt>
+          <dd class="col-sm-7 mb-0">
+            {% if matricula.consentimento_lgpd %}
+            Aceito em {{ matricula.data_consentimento|date:"d/m/Y H:i" }} (termo versão {{ matricula.versao_termo }})
+            {% else %}
+            <span class="text-danger">Não registrado</span>
+            {% endif %}
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5">Criança e responsável</h2>
+        <dl class="row mb-0">
+          <dt class="col-sm-5">Criança</dt><dd class="col-sm-7"><a href="{{ matricula.crianca.get_absolute_url }}">{{ matricula.crianca.nome }}</a></dd>
+          <dt class="col-sm-5">Idade</dt><dd class="col-sm-7">{{ matricula.crianca.idade }} anos ({{ matricula.crianca.data_nascimento|date:"d/m/Y" }})</dd>
+          <dt class="col-sm-5">Bairro</dt><dd class="col-sm-7">{{ matricula.crianca.bairro.nome }}</dd>
+          <dt class="col-sm-5">Observações de saúde</dt><dd class="col-sm-7">{{ matricula.crianca.observacoes_saude|default:"-"|linebreaksbr }}</dd>
+          <dt class="col-sm-5">Responsável</dt><dd class="col-sm-7"><a href="{{ matricula.crianca.responsavel.get_absolute_url }}">{{ matricula.crianca.responsavel.nome }}</a></dd>
+          <dt class="col-sm-5">Telefone</dt><dd class="col-sm-7 mb-0">{{ matricula.crianca.responsavel.telefone|telefone }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="{% url 'matriculas:matricula_lista' %}">Voltar para as matrículas</a>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block titulo %}Matrícula enviada{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 text-center">
+    <h1 class="h3 text-success">Matrícula enviada!</h1>
+    <p class="lead">Anote ou tire uma foto do número de protocolo.</p>
+
+    <ul class="list-group text-start my-4">
+      {% for item in protocolos %}
+      <li class="list-group-item">
+        <div class="fs-4 fw-bold">{{ item.protocolo }}</div>
+        <div>{{ item.crianca }} - {{ item.atividade }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="alert alert-info text-start" role="alert">
+      <strong>E agora?</strong> A matrícula está <strong>pendente</strong>. A equipe da {{ nome_ong }} vai conferir os dados e entrar em contato pelo telefone informado para confirmar.
+    </div>
+    <a class="btn btn-outline-success" href="{% url 'core:inicio' %}">Voltar para o início</a>
+  </div>
+</div>
+{% endblock %}
