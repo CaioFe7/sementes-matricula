@@ -31,6 +31,8 @@ X_FRAME_OPTIONS = "DENY"
 SESSION_COOKIE_AGE = 60 * 60 * 8
 
 # Arquivos estáticos servidos pelo WhiteNoise, com compressão e cache.
+# O middleware entra logo depois do SecurityMiddleware.
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")  # noqa: F405
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
