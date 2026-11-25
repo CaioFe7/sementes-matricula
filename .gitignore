@@ -1,0 +1,36 @@
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+
+# Bancos de dados locais e backups
+*.sqlite3
+*.sqlite3-journal
+*.dump
+*.sql
+backups/
+
+# Arquivos enviados e relatórios exportados (podem conter dados pessoais)
+media/
+exports/
+*.xlsx
+*.pdf
+
+# Arquivos estáticos coletados
+staticfiles/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

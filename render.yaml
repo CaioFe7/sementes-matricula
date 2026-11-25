@@ -1,0 +1,35 @@
+# Preparação para deploy no Render (Blueprint).
+# Antes de usar, confirme os limites atuais do plano gratuito e crie a conta
+# em nome da ONG, para que ela seja a dona do sistema e dos dados.
+databases:
+  - name: sementes-db
+    plan: free
+    databaseName: sementes
+    user: sementes
+
+services:
+  - type: web
+    name: sementes-matricula
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sementes-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: ADMIN_URL
+        sync: false
+      - key: CONTATO_PRIVACIDADE
+        sync: false

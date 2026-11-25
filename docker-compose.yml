@@ -1,0 +1,22 @@
+# PostgreSQL para desenvolvimento local.
+# Uso: defina POSTGRES_PASSWORD no arquivo .env e rode "docker compose up -d".
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sementes}
+      POSTGRES_USER: ${POSTGRES_USER:-sementes}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sementes} -d ${POSTGRES_DB:-sementes}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  dados_postgres:

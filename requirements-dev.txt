@@ -1,0 +1,6 @@
+# Dependências de desenvolvimento e testes
+-r requirements.txt
+pytest>=8.0
+pytest-django>=4.9
+Faker>=30.0
+ruff>=0.6
