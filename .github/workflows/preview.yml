@@ -1,0 +1,43 @@
+# TEMPORÁRIO: sobe o sistema com dados fictícios e tira capturas de tela.
+name: Preview das telas (temporário)
+
+on:
+  push:
+    branches: [ci-diagnostico]
+
+permissions:
+  contents: write
+
+jobs:
+  telas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Subir o sistema e capturar as telas
+        run: |
+          set +e
+          mkdir -p _telas
+          pip install -r requirements-dev.txt playwright > _telas/pip.txt 2>&1; echo "saida=$?" >> _telas/pip.txt
+          playwright install --with-deps chromium > _telas/chromium.txt 2>&1; echo "saida=$?" >> _telas/chromium.txt
+          pytest -q -p no:cacheprovider > _telas/pytest.txt 2>&1; echo "saida=$?" >> _telas/pytest.txt
+          python manage.py migrate > /dev/null 2>&1
+          export SENHA_ADMIN=$(python -c "import secrets; print(secrets.token_urlsafe(12))")
+          python manage.py criar_admin_teste --senha "$SENHA_ADMIN" > /dev/null 2>&1
+          python manage.py popular_dados_ficticios --semente 1 > _telas/popular.txt 2>&1
+          python manage.py runserver 127.0.0.1:8000 --noreload > _telas/servidor.txt 2>&1 &
+          sleep 6
+          python _preview/capturar.py > _telas/captura.txt 2>&1; echo "saida=$?" >> _telas/captura.txt
+
+      - name: Publicar as capturas
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _telas
+          git commit -m "capturas de tela do commit ${GITHUB_SHA}"
+          git push --force origin HEAD:ci-diagnostico
