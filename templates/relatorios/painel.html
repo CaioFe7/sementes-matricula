@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Painel{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Painel de indicadores</h1>
+  {% if eh_administrador %}
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-success" href="{% url 'relatorios:exportar_excel' %}{% querystring %}">Exportar Excel</a>
+    <a class="btn btn-outline-success" href="{% url 'relatorios:exportar_pdf' %}{% querystring %}">Exportar PDF</a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card h-100 text-center"><div class="card-body">
+      <div class="display-6 fw-semibold">{{ relatorio.total_ativos }}</div>
+      <div class="text-muted">Atendidos ativos</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="card h-100 text-center text-decoration-none" href="{% url 'matriculas:matricula_pendentes' %}"><div class="card-body">
+      <div class="display-6 fw-semibold">{{ relatorio.pendentes }}</div>
+      <div class="text-muted">Matrículas pendentes</div>
+    </div></a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card h-100 text-center"><div class="card-body">
+      <div class="display-6 fw-semibold">{{ relatorio.meninas }}</div>
+      <div class="text-muted">Meninas</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card h-100 text-center"><div class="card-body">
+      <div class="display-6 fw-semibold">{{ relatorio.meninos }}</div>
+      <div class="text-muted">Meninos</div>
+    </div></div>
+  </div>
+</div>
+
+<form method="get" class="card card-body bg-light mb-3" novalidate>
+  {% include "includes/form_campos.html" with form=filtro %}
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <button type="submit" class="btn btn-success">Aplicar filtros</button>
+    <a class="btn btn-outline-secondary" href="{% url 'relatorios:painel' %}">Voltar ao padrão</a>
+  </div>
+</form>
+<p class="text-muted">
+  {{ descricao_filtros }}. <strong>{{ relatorio.total }}</strong> criança(s) e adolescente(s) neste filtro.
+  Os cartões "Meninas" e "Meninos" e os gráficos seguem o filtro; os dois primeiros cartões são totais gerais.
+</p>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">Por sexo</h2>
+      <div class="grafico"><canvas id="grafico-sexo" role="img" aria-label="Gráfico de atendidos por sexo"></canvas></div>
+      <table class="table table-sm mt-3 mb-0">
+        <tbody>{% for rotulo, valor in relatorio.por_sexo %}<tr><td>{{ rotulo }}</td><td class="text-end">{{ valor }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">Por faixa etária</h2>
+      <div class="grafico"><canvas id="grafico-faixa" role="img" aria-label="Gráfico de atendidos por faixa etária"></canvas></div>
+      <table class="table table-sm mt-3 mb-0">
+        <tbody>{% for rotulo, valor in relatorio.por_faixa %}<tr><td>{{ rotulo }}</td><td class="text-end">{{ valor }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">Por bairro</h2>
+      <div class="grafico"><canvas id="grafico-bairro" role="img" aria-label="Gráfico de atendidos por bairro"></canvas></div>
+      <table class="table table-sm mt-3 mb-0">
+        <tbody>{% for rotulo, valor in relatorio.por_bairro %}<tr><td>{{ rotulo }}</td><td class="text-end">{{ valor }}</td></tr>{% empty %}<tr><td class="text-muted">Sem registros.</td></tr>{% endfor %}</tbody>
+      </table>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">Por atividade (matrículas)</h2>
+      <div class="grafico"><canvas id="grafico-atividade" role="img" aria-label="Gráfico de matrículas por atividade"></canvas></div>
+      <table class="table table-sm mt-3 mb-0">
+        <tbody>{% for rotulo, valor in relatorio.por_atividade %}<tr><td>{{ rotulo }}</td><td class="text-end">{{ valor }}</td></tr>{% empty %}<tr><td class="text-muted">Sem registros.</td></tr>{% endfor %}</tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+
+{{ graficos|json_script:"dados-graficos" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js"></script>
+<script src="{% static 'js/painel.js' %}"></script>
+{% endblock %}
