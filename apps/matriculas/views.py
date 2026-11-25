@@ -31,7 +31,7 @@ class AtividadeListaView(AdministradorMixin, ListView):
             total_pendentes=Count(
                 "matriculas", filter=Q(matriculas__status=Matricula.Status.PENDENTE)
             ),
-        )
+        ).order_by("nome")
 
 
 class AtividadeCriarView(

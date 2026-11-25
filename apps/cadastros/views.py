@@ -48,7 +48,8 @@ class BairroListaView(AdministradorMixin, ListView):
     context_object_name = "bairros"
 
     def get_queryset(self):
-        return Bairro.objects.annotate(total_criancas=Count("criancas"))
+        # O order_by é necessário: com annotate, a ordem padrão do model não vale.
+        return Bairro.objects.annotate(total_criancas=Count("criancas")).order_by("nome")
 
 
 class BairroCriarView(AdministradorMixin, PaginaFormularioMixin, SuccessMessageMixin, CreateView):
@@ -77,8 +78,10 @@ class ResponsavelListaView(AreaInternaMixin, ListaComFiltroMixin, ListView):
     filtro_class = FiltroResponsavelForm
 
     def get_base_queryset(self):
-        return Responsavel.objects.select_related("bairro").annotate(
-            total_criancas=Count("criancas")
+        return (
+            Responsavel.objects.select_related("bairro")
+            .annotate(total_criancas=Count("criancas"))
+            .order_by("nome", "pk")
         )
 
 
