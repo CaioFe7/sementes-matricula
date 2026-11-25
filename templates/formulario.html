@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <h1 class="h3 mb-3">{{ titulo }}</h1>
+    {% if descricao %}<p class="text-muted">{{ descricao }}</p>{% endif %}
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_campos.html" %}
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <button type="submit" class="btn btn-success btn-lg">{{ texto_botao|default:"Salvar" }}</button>
+        {% if url_voltar %}<a class="btn btn-outline-secondary btn-lg" href="{{ url_voltar }}">Cancelar</a>{% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

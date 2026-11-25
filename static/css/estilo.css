@@ -1,0 +1,101 @@
+/* Ajustes sobre o Bootstrap 5: contraste, botões grandes e leitura fácil no celular. */
+
+:root {
+  --verde-ong: #146c43;
+}
+
+body {
+  font-size: 1.05rem;
+}
+
+.barra-topo {
+  background-color: var(--verde-ong);
+}
+
+/* Áreas de toque maiores para quem usa o celular. */
+.btn {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-sm {
+  min-height: 2.25rem;
+}
+
+.form-control,
+.form-select {
+  min-height: 2.9rem;
+}
+
+.form-check-input {
+  width: 1.4em;
+  height: 1.4em;
+  margin-top: 0.15em;
+}
+
+.form-check-label {
+  padding-left: 0.4rem;
+}
+
+/* Foco bem visível para quem navega pelo teclado. */
+a:focus-visible,
+.btn:focus-visible,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  outline: 3px solid #ffbf47;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Campo-armadilha contra robôs: fica fora da tela, pessoas não o veem. */
+.campo-extra {
+  position: absolute !important;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Indicador das etapas da matrícula on-line. */
+.etapa {
+  padding: 0.35rem 0.8rem;
+  border-radius: 2rem;
+  background-color: #e9ecef;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.etapa-atual {
+  background-color: var(--verde-ong);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Cores da situação da matrícula. */
+.situacao-pendente {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.situacao-ativa {
+  background-color: var(--verde-ong);
+  color: #fff;
+}
+
+.situacao-recusada {
+  background-color: #b02a37;
+  color: #fff;
+}
+
+.situacao-encerrada {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.grafico {
+  position: relative;
+  height: 260px;
+}

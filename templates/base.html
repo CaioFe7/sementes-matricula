@@ -1,0 +1,98 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Matrículas{% endblock %} | {{ nome_ong }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <a class="visually-hidden-focusable btn btn-light m-2" href="#conteudo">Pular para o conteúdo</a>
+
+  <nav class="navbar navbar-expand-lg navbar-dark barra-topo" aria-label="Menu principal">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{% if eh_equipe %}{% url 'relatorios:painel' %}{% else %}{% url 'core:inicio' %}{% endif %}">{{ nome_ong }}</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menu">
+        {% if eh_equipe %}
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'relatorios:painel' %}">Painel</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'matriculas:matricula_pendentes' %}">Pendentes
+              {% if total_pendentes %}<span class="badge text-bg-warning">{{ total_pendentes }}</span>{% endif %}
+            </a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'matriculas:matricula_lista' %}">Matrículas</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cadastros:crianca_lista' %}">Crianças</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cadastros:responsavel_lista' %}">Responsáveis</a></li>
+          {% if eh_administrador %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administração</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'matriculas:atividade_lista' %}">Atividades</a></li>
+              <li><a class="dropdown-item" href="{% url 'cadastros:bairro_lista' %}">Bairros</a></li>
+              <li><a class="dropdown-item" href="{% url 'contas:usuario_lista' %}">Usuários</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        {% else %}
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'matricula_publica:responsavel' %}">Fazer matrícula</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'core:privacidade' %}">Privacidade</a></li>
+        </ul>
+        {% endif %}
+
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_short_name|default:user.get_username }}</a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'contas:trocar_senha' %}">Trocar minha senha</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'contas:logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item">Sair</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'contas:login' %}">Área da equipe</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo" class="container py-4 flex-grow-1">
+    {% if messages %}
+    <div aria-live="polite">
+      {% for mensagem in messages %}
+      <div class="alert alert-{{ mensagem.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ mensagem }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="border-top py-3 mt-4 bg-light">
+    <div class="container small text-muted d-flex flex-wrap justify-content-between gap-2">
+      <span>{{ nome_ong }}</span>
+      <a href="{% url 'core:privacidade' %}">Política de privacidade</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/mascaras.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block titulo %}Política de privacidade{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="h3">Política de privacidade</h1>
+    <p class="text-muted">Texto inicial, em revisão com a ONG. Versão do termo: {{ versao_termo }}.</p>
+
+    <h2 class="h5 mt-4">Quais dados são guardados</h2>
+    <ul>
+      <li><strong>Do responsável:</strong> nome, CPF, data de nascimento, parentesco, telefone, e-mail (opcional) e endereço.</li>
+      <li><strong>Da criança ou adolescente:</strong> nome, data de nascimento, sexo, bairro, escola e série, e observações de saúde (opcionais).</li>
+      <li><strong>Da matrícula:</strong> atividade escolhida, data, situação e o registro de que o termo foi aceito.</li>
+    </ul>
+
+    <h2 class="h5 mt-4">Termo de consentimento</h2>
+    <div class="card card-body bg-light">
+      {% include "includes/termo_consentimento.html" %}
+    </div>
+
+    <h2 class="h5 mt-4">Como os dados são protegidos</h2>
+    <ul>
+      <li>O site usa conexão segura (HTTPS).</li>
+      <li>Só a equipe autorizada entra na área interna, com usuário e senha.</li>
+      <li>Os relatórios mostram apenas totais, sem nomes.</li>
+      <li>São feitas cópias de segurança do banco de dados.</li>
+    </ul>
+
+    <h2 class="h5 mt-4">Como pedir para ver, corrigir ou apagar seus dados</h2>
+    <p>
+      Fale com a equipe da {{ nome_ong }}{% if contato_privacidade %} pelo contato: <strong>{{ contato_privacidade }}</strong>{% endif %}.
+      O tratamento de dados de crianças e adolescentes segue a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, art. 14).
+    </p>
+  </div>
+</div>
+{% endblock %}

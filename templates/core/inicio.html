@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block titulo %}Início{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 text-center py-4">
+    <h1 class="display-6 fw-semibold">Matrícula on-line</h1>
+    <p class="lead">Faça aqui a matrícula de crianças e adolescentes nas atividades da {{ nome_ong }}.</p>
+    <a class="btn btn-success btn-lg px-5 my-3" href="{% url 'matricula_publica:responsavel' %}">Fazer matrícula</a>
+  </div>
+</div>
+
+<div class="row g-3 justify-content-center">
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">1. Preencha os dados</h2>
+      <p class="mb-0">Informe os dados do responsável e da criança. Leva cerca de 5 minutos.</p>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">2. Escolha a atividade</h2>
+      <p class="mb-0">Aparecem as atividades disponíveis para a idade da criança.</p>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h5">3. Guarde o protocolo</h2>
+      <p class="mb-0">No final você recebe um número de protocolo. A equipe confirma a matrícula depois.</p>
+    </div></div>
+  </div>
+</div>
+
+<p class="text-center text-muted mt-4">Tenha em mãos o seu CPF e a data de nascimento da criança.</p>
+{% endblock %}

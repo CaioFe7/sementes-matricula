@@ -1,0 +1,8 @@
+{# Formulário de busca e filtros das listas. Espera a variável "filtro". #}
+<form method="get" class="card card-body bg-light mb-3" novalidate>
+  {% include "includes/form_campos.html" with form=filtro %}
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <button type="submit" class="btn btn-success">Buscar</button>
+    <a class="btn btn-outline-secondary" href="{{ request.path }}">Limpar filtros</a>
+  </div>
+</form>
