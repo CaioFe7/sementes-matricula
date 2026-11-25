@@ -33,6 +33,7 @@ jobs:
 
       - name: Rodar tudo e guardar a saída
         run: |
+          set +e
           mkdir -p _diag
           pip install -r requirements-dev.txt > _diag/01-pip.txt 2>&1; echo "saida=$?" >> _diag/01-pip.txt
           pip freeze > _diag/02-freeze.txt 2>&1
