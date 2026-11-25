@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load formatos %}
+
+{% block titulo %}Crianças e adolescentes{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Crianças e adolescentes</h1>
+  <a class="btn btn-success" href="{% url 'cadastros:crianca_criar' %}">Nova criança</a>
+</div>
+
+{% include "includes/filtro.html" %}
+
+<p class="text-muted">{{ page_obj.paginator.count }} registro(s) encontrado(s).</p>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr><th>Nome</th><th>Idade</th><th>Faixa etária</th><th>Sexo</th><th>Bairro</th><th>Responsável</th><th>Telefone</th></tr>
+    </thead>
+    <tbody>
+      {% for crianca in criancas %}
+      <tr>
+        <td><a href="{{ crianca.get_absolute_url }}">{{ crianca.nome }}</a></td>
+        <td>{{ crianca.idade }}</td>
+        <td class="text-nowrap">{{ crianca.faixa_etaria }}</td>
+        <td>{{ crianca.get_sexo_display }}</td>
+        <td>{{ crianca.bairro.nome }}</td>
+        <td>{{ crianca.responsavel.nome }}</td>
+        <td class="text-nowrap">{{ crianca.responsavel.telefone|telefone }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">Nenhum registro encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/paginacao.html" %}
+{% endblock %}

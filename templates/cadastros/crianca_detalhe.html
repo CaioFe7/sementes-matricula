@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load formatos %}
+
+{% block titulo %}{{ crianca.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">{{ crianca.nome }}</h1>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-success" href="{% url 'matriculas:matricula_criar' %}?crianca={{ crianca.pk }}">Nova matrícula</a>
+    <a class="btn btn-outline-primary" href="{% url 'cadastros:crianca_editar' crianca.pk %}">Editar</a>
+    {% if eh_administrador %}
+    <a class="btn btn-outline-danger" href="{% url 'cadastros:crianca_excluir' crianca.pk %}">Excluir</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5">Dados</h2>
+        <dl class="row mb-0">
+          <dt class="col-sm-5">Data de nascimento</dt><dd class="col-sm-7">{{ crianca.data_nascimento|date:"d/m/Y" }}</dd>
+          <dt class="col-sm-5">Idade</dt><dd class="col-sm-7">{{ crianca.idade }} anos ({{ crianca.faixa_etaria }})</dd>
+          <dt class="col-sm-5">Sexo</dt><dd class="col-sm-7">{{ crianca.get_sexo_display }}</dd>
+          <dt class="col-sm-5">Bairro</dt><dd class="col-sm-7">{{ crianca.bairro.nome }}</dd>
+          <dt class="col-sm-5">Escola</dt><dd class="col-sm-7">{{ crianca.escola|default:"-" }}</dd>
+          <dt class="col-sm-5">Série/ano</dt><dd class="col-sm-7">{{ crianca.serie|default:"-" }}</dd>
+          <dt class="col-sm-5">Observações de saúde</dt><dd class="col-sm-7 mb-0">{{ crianca.observacoes_saude|default:"-"|linebreaksbr }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5">Responsáveis</h2>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2">
+            <a href="{{ crianca.responsavel.get_absolute_url }}">{{ crianca.responsavel.nome }}</a>
+            <span class="badge text-bg-secondary">principal</span><br>
+            <span class="text-muted">{{ crianca.responsavel.get_parentesco_display }} - {{ crianca.responsavel.telefone|telefone }}</span>
+          </li>
+          {% for outro in outros_responsaveis %}
+          <li class="mb-2">
+            <a href="{{ outro.get_absolute_url }}">{{ outro.nome }}</a><br>
+            <span class="text-muted">{{ outro.get_parentesco_display }} - {{ outro.telefone|telefone }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h5">Histórico de matrículas</h2>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr><th>Protocolo</th><th>Atividade</th><th>Situação</th><th>Solicitada em</th><th>Aprovada em</th></tr>
+    </thead>
+    <tbody>
+      {% for matricula in matriculas %}
+      <tr>
+        <td class="text-nowrap"><a href="{{ matricula.get_absolute_url }}">{{ matricula.protocolo }}</a></td>
+        <td>{{ matricula.atividade.nome }}</td>
+        <td><span class="badge situacao-{{ matricula.status }}">{{ matricula.get_status_display }}</span></td>
+        <td>{{ matricula.data_solicitacao|date:"d/m/Y" }}</td>
+        <td>{{ matricula.data_aprovacao|date:"d/m/Y"|default:"-" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="text-center text-muted py-4">Nenhuma matrícula ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<a href="{% url 'cadastros:crianca_lista' %}">Voltar para a lista</a>
+{% endblock %}

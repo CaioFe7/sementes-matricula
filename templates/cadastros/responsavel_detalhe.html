@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load formatos %}
+
+{% block titulo %}{{ responsavel.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">{{ responsavel.nome }}</h1>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary" href="{% url 'cadastros:responsavel_editar' responsavel.pk %}">Editar</a>
+    {% if eh_administrador %}
+    <a class="btn btn-outline-danger" href="{% url 'cadastros:responsavel_excluir' responsavel.pk %}">Excluir</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-4">CPF</dt><dd class="col-sm-8">{{ responsavel.cpf|cpf }}</dd>
+      <dt class="col-sm-4">Data de nascimento</dt><dd class="col-sm-8">{{ responsavel.data_nascimento|date:"d/m/Y" }}</dd>
+      <dt class="col-sm-4">Parentesco</dt><dd class="col-sm-8">{{ responsavel.get_parentesco_display }}</dd>
+      <dt class="col-sm-4">Telefone principal</dt><dd class="col-sm-8">{{ responsavel.telefone|telefone }}</dd>
+      <dt class="col-sm-4">Telefone secundário</dt><dd class="col-sm-8">{{ responsavel.telefone_secundario|telefone|default:"-" }}</dd>
+      <dt class="col-sm-4">E-mail</dt><dd class="col-sm-8">{{ responsavel.email|default:"-" }}</dd>
+      <dt class="col-sm-4">Endereço</dt>
+      <dd class="col-sm-8">
+        {{ responsavel.logradouro }}, {{ responsavel.numero }}{% if responsavel.complemento %}, {{ responsavel.complemento }}{% endif %}<br>
+        {{ responsavel.bairro.nome }} - CEP {{ responsavel.cep|cep }}
+      </dd>
+      <dt class="col-sm-4">Cadastrado em</dt><dd class="col-sm-8 mb-0">{{ responsavel.criado_em|date:"d/m/Y H:i" }}</dd>
+    </dl>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+  <h2 class="h5 mb-0">Crianças e adolescentes</h2>
+  <a class="btn btn-sm btn-success" href="{% url 'cadastros:crianca_criar' %}?responsavel={{ responsavel.pk }}">Cadastrar criança</a>
+</div>
+<ul class="list-group mb-3">
+  {% for crianca in criancas %}
+  <li class="list-group-item d-flex flex-wrap justify-content-between gap-2">
+    <a href="{{ crianca.get_absolute_url }}">{{ crianca.nome }}</a>
+    <span class="text-muted">{{ crianca.idade }} anos - responsável principal</span>
+  </li>
+  {% endfor %}
+  {% for crianca in criancas_secundarias %}
+  <li class="list-group-item d-flex flex-wrap justify-content-between gap-2">
+    <a href="{{ crianca.get_absolute_url }}">{{ crianca.nome }}</a>
+    <span class="text-muted">{{ crianca.idade }} anos - outro responsável</span>
+  </li>
+  {% endfor %}
+  {% if not criancas and not criancas_secundarias %}
+  <li class="list-group-item text-muted">Nenhuma criança ligada a este responsável.</li>
+  {% endif %}
+</ul>
+
+<a href="{% url 'cadastros:responsavel_lista' %}">Voltar para a lista</a>
+{% endblock %}

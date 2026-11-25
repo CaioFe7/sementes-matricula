@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load formatos %}
+
+{% block titulo %}Responsáveis{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Responsáveis</h1>
+  <a class="btn btn-success" href="{% url 'cadastros:responsavel_criar' %}">Novo responsável</a>
+</div>
+
+{% include "includes/filtro.html" %}
+
+<p class="text-muted">{{ page_obj.paginator.count }} responsável(is) encontrado(s).</p>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>Bairro</th><th class="text-end">Crianças</th></tr>
+    </thead>
+    <tbody>
+      {% for responsavel in responsaveis %}
+      <tr>
+        <td><a href="{{ responsavel.get_absolute_url }}">{{ responsavel.nome }}</a></td>
+        <td class="text-nowrap">{{ responsavel.cpf|cpf }}</td>
+        <td class="text-nowrap">{{ responsavel.telefone|telefone }}</td>
+        <td>{{ responsavel.bairro.nome }}</td>
+        <td class="text-end">{{ responsavel.total_criancas }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="text-center text-muted py-4">Nenhum responsável encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/paginacao.html" %}
+{% endblock %}
