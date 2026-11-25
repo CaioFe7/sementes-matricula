@@ -86,8 +86,7 @@ pip install -r requirements-dev.txt
 # 3. Criar o arquivo de configuração
 cp .env.example .env             # no Windows: copy .env.example .env
 
-# 4. Gerar e aplicar as migrations (cria as tabelas)
-python manage.py makemigrations
+# 4. Aplicar as migrations (cria as tabelas)
 python manage.py migrate
 
 # 5. Criar os usuários de teste e os dados fictícios
@@ -100,7 +99,7 @@ python manage.py runserver
 
 Abra http://127.0.0.1:8000/. A área da equipe fica em http://127.0.0.1:8000/conta/entrar/.
 
-> **Importante:** as migrations ainda não estão no repositório. Depois do passo 4, inclua no Git os arquivos criados em `apps/cadastros/migrations/` e `apps/matriculas/migrations/`. O CI confere se elas estão lá.
+> Sempre que você alterar um model, rode `python manage.py makemigrations` e inclua no Git o arquivo criado na pasta `migrations/` do app. O CI confere se as migrations estão em dia.
 
 ### Opção 2: com Docker (PostgreSQL)
 
