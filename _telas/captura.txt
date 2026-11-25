@@ -1,0 +1,23 @@
+ok 01-celular-inicio
+ok 02-celular-matricula-responsavel
+ok 03-celular-matricula-crianca
+ok 04-celular-matricula-atividade
+ok 05-celular-matricula-termo
+ok 06-celular-matricula-concluida
+ok 07-celular-matricula-erros
+ok 08-celular-painel
+ok 08-celular-pendentes
+ok 08-celular-matricula-detalhe
+ok 08-celular-criancas
+ok 08-celular-crianca-detalhe
+ok 10-computador-painel
+ok 10-computador-pendentes
+ok 10-computador-matricula-detalhe
+ok 10-computador-criancas
+ok 10-computador-crianca-detalhe
+ok 20-computador-crianca-nova
+ok 21-computador-responsaveis
+ok 22-computador-atividades
+ok 23-computador-usuarios
+ok 24-computador-privacidade
+saida=0
